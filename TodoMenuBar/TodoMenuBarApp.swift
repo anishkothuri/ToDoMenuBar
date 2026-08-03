@@ -9,9 +9,11 @@
 //
 
 import SwiftUI
+import AppKit
 
 @main
 struct TodoMenuBarApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var store = TodoStore()
 
     // Persisted appearance choice (System / Light / Dark), shared with the
@@ -30,25 +32,24 @@ struct TodoMenuBarApp: App {
                 .environmentObject(store)
                 .preferredColorScheme((AppearanceMode(rawValue: appearanceModeRaw) ?? .system).colorScheme)
         } label: {
-            // Outline checkmark while tasks are pending, filled checkmark
-            // once everything's done, plus a small count of what's left —
-            // a glance at the menu bar is enough, no need to open the popup.
+            // Plain checkmark, no circle — count of what's left sits right
+            // next to it so a glance at the menu bar is enough.
             HStack(spacing: 3) {
-                Image(systemName: menuBarIconName)
+                Image(systemName: "checkmark")
                 if remainingCount > 0 {
                     Text("\(remainingCount)")
                 }
             }
         }
         .menuBarExtraStyle(.window)
+
+        Window("TodoMenuBar Settings", id: "settings") {
+            SettingsView()
+        }
+        .windowResizability(.contentSize)
     }
 
     private var remainingCount: Int {
         store.items.filter { !$0.isDone }.count
-    }
-
-    private var menuBarIconName: String {
-        guard !store.items.isEmpty else { return "checkmark.circle" }
-        return remainingCount == 0 ? "checkmark.circle.fill" : "checkmark.circle"
     }
 }

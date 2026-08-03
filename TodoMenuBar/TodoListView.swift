@@ -13,10 +13,16 @@ struct TodoListView: View {
     @EnvironmentObject var store: TodoStore
     @State private var newItemTitle: String = ""
     @FocusState private var isInputFocused: Bool
+    @Environment(\.openWindow) private var openWindow
 
     @AppStorage("TodoMenuBar.appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
+    @AppStorage("TodoMenuBar.popupSize") private var popupSizeRaw: String = PopupSize.standard.rawValue
+
     private var appearanceMode: AppearanceMode {
         AppearanceMode(rawValue: appearanceModeRaw) ?? .system
+    }
+    private var popupSize: PopupSize {
+        PopupSize(rawValue: popupSizeRaw) ?? .standard
     }
 
     var body: some View {
@@ -25,24 +31,13 @@ struct TodoListView: View {
                 Text("To-Do List")
                     .font(.headline)
                 Spacer()
-                Menu {
-                    ForEach(AppearanceMode.allCases) { mode in
-                        Button {
-                            appearanceModeRaw = mode.rawValue
-                        } label: {
-                            if mode == appearanceMode {
-                                Label(mode.label, systemImage: "checkmark")
-                            } else {
-                                Text(mode.label)
-                            }
-                        }
-                    }
+                Button {
+                    openWindow(id: "settings")
                 } label: {
-                    Image(systemName: appearanceMode.icon)
+                    Image(systemName: "gearshape")
                 }
-                .menuStyle(.borderlessButton)
-                .frame(width: 20)
-                .help("Appearance: \(appearanceMode.label)")
+                .buttonStyle(.plain)
+                .help("Settings")
             }
             .padding([.top, .horizontal])
             .padding(.bottom, 4)
@@ -75,7 +70,7 @@ struct TodoListView: View {
                     }
                     .padding(.vertical, 4)
                 }
-                .frame(maxHeight: 320)
+                .frame(maxHeight: popupSize.listMaxHeight)
                 .animation(.easeInOut(duration: 0.15), value: sortedItems)
             }
 
@@ -102,8 +97,15 @@ struct TodoListView: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
         }
-        .frame(width: 300)
+        .frame(width: popupSize.width)
         .onAppear { isInputFocused = true }
+        // MenuBarExtra's .window style draws a translucent, appearance-
+        // following material behind the content. That's fine for System
+        // and Dark, but it makes "Light" look like a darkened light mode
+        // when the Mac itself is set to Dark. Force a flat white
+        // background + black text here so Light is unambiguously light.
+        .background(appearanceMode == .light ? Color.white : Color.clear)
+        .foregroundColor(appearanceMode == .light ? Color.black : nil)
     }
 
     private var sortedItems: [TodoItem] {
