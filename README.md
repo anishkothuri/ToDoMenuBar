@@ -32,14 +32,14 @@ away.
 
 ## Download
 
-Grab the latest **`ToDoMenuBar.dmg`** from the
+Grab the latest **`TodoMenuBar.dmg`** from the
 [**Releases**](https://github.com/anishkothuri/ToDoMenuBar/releases/latest)
-page. Look for the file named `ToDoMenuBar.dmg` under "Assets" on the latest
+page. Look for the file named `TodoMenuBar.dmg` under "Assets" on the latest
 release.
 
 ### Installing
 
-1. Download `ToDoMenuBar.dmg` from the Releases page above (it'll land in
+1. Download `TodoMenuBar.dmg` from the Releases page above (it'll land in
    your **Downloads** folder).
 2. Double-click the downloaded `.dmg` to open it — a window appears with the
    TodoMenuBar app icon and a shortcut to your **Applications** folder.
