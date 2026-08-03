@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v xcodegen >/dev/null 2>&1; then
+  brew install xcodegen
+fi
+xcodegen generate
+
+xcodebuild \
+  -project "TodoMenuBar.xcodeproj" \
+  -scheme "TodoMenuBar" \
+  -destination "platform=macOS" \
+  test
