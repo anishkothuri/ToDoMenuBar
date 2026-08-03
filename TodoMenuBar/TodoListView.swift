@@ -56,24 +56,30 @@ struct TodoListView: View {
 
             Divider()
 
-            if store.items.isEmpty {
-                Text("No tasks yet — add one above.")
-                    .foregroundColor(.secondary)
-                    .font(.callout)
-                    .padding()
-            } else {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 2) {
-                        ForEach(sortedItems) { item in
-                            TodoRow(item: item)
-                                .transition(.opacity.combined(with: .scale(scale: 0.97)))
+            Group {
+                if store.items.isEmpty {
+                    Text("No tasks yet — add one above.")
+                        .foregroundColor(.secondary)
+                        .font(.callout)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 24)
+                } else {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 2) {
+                            ForEach(sortedItems) { item in
+                                TodoRow(item: item)
+                                    .transition(.opacity.combined(with: .scale(scale: 0.97)))
+                            }
                         }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
-                .frame(maxHeight: popupSize.listMaxHeight)
-                .animation(.easeInOut(duration: 0.15), value: sortedItems)
             }
+            // A floor keeps the popup a consistent, roomy size even with
+            // zero or few tasks; it then grows with the list up to a
+            // ceiling, past which it scrolls instead of growing further.
+            .frame(minHeight: popupSize.listMinHeight, maxHeight: popupSize.listMaxHeight)
+            .animation(.easeInOut(duration: 0.15), value: sortedItems)
 
             Divider()
 

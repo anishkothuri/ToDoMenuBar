@@ -33,15 +33,10 @@ struct TodoMenuBarApp: App {
                 .environmentObject(store)
                 .preferredColorScheme((AppearanceMode(rawValue: appearanceModeRaw) ?? .system).colorScheme)
         } label: {
-            // Plain checkmark, no circle — count of what's left sits right
-            // next to it so a glance at the menu bar is enough.
-            HStack(spacing: 3) {
-                Image(systemName: "checkmark")
-                if remainingCount > 0 {
-                    Text("\(remainingCount)")
-                }
-            }
-            .accessibilityLabel(remainingCount > 0 ? "TodoMenuBar, \(remainingCount) tasks remaining" : "TodoMenuBar, all tasks complete")
+            // Plain checkmark, no circle, no count badge — click it to see
+            // what's left.
+            Image(systemName: "checkmark")
+                .accessibilityLabel(remainingCount > 0 ? "TodoMenuBar, \(remainingCount) tasks remaining" : "TodoMenuBar, all tasks complete")
         }
         .menuBarExtraStyle(.window)
 
