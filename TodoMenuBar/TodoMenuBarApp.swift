@@ -20,12 +20,8 @@ struct TodoMenuBarApp: App {
     // menu inside TodoListView via the same UserDefaults key.
     @AppStorage("TodoMenuBar.appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
 
-    init() {
-        // Only nudges login-item registration on the very first launch
-        // ever. After that, the "Launch at Login" toggle in Settings is
-        // the sole source of truth — this never overrides a user's choice.
-        LoginItemManager.shared.registerAtLoginIfFirstLaunch()
-    }
+    // Launch at Login starts off. It's never registered automatically —
+    // only the toggle in Settings turns it on, via LoginItemManager.
 
     var body: some Scene {
         MenuBarExtra {
