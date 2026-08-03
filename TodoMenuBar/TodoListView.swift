@@ -32,6 +32,11 @@ struct TodoListView: View {
                     .font(.headline)
                 Spacer()
                 Button {
+                    // Menu-bar-only (accessory) apps don't automatically
+                    // bring a newly opened window to the front — without
+                    // this, the Settings window opens behind everything
+                    // else and looks like nothing happened.
+                    NSApp.activate(ignoringOtherApps: true)
                     openWindow(id: "settings")
                 } label: {
                     Image(systemName: "gearshape")

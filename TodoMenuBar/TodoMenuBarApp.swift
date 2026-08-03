@@ -19,6 +19,7 @@ struct TodoMenuBarApp: App {
     // Persisted appearance choice (System / Light / Dark), shared with the
     // menu inside TodoListView via the same UserDefaults key.
     @AppStorage("TodoMenuBar.appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
+    @AppStorage("TodoMenuBar.menuBarIcon") private var menuBarIconRaw: String = MenuBarIconStyle.checkmark.rawValue
 
     // Launch at Login starts off. It's never registered automatically —
     // only the toggle in Settings turns it on, via LoginItemManager.
@@ -29,9 +30,9 @@ struct TodoMenuBarApp: App {
                 .environmentObject(store)
                 .preferredColorScheme((AppearanceMode(rawValue: appearanceModeRaw) ?? .system).colorScheme)
         } label: {
-            // Plain checkmark, no circle, no count badge — click it to see
-            // what's left.
-            Image(systemName: "checkmark")
+            // No count badge — click it to see what's left. Icon itself is
+            // user-selectable in Settings.
+            Image(systemName: (MenuBarIconStyle(rawValue: menuBarIconRaw) ?? .checkmark).symbolName)
                 .accessibilityLabel(remainingCount > 0 ? "TodoMenuBar, \(remainingCount) tasks remaining" : "TodoMenuBar, all tasks complete")
         }
         .menuBarExtraStyle(.window)

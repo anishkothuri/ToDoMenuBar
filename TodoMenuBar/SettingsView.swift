@@ -13,6 +13,7 @@ struct SettingsView: View {
     @AppStorage("TodoMenuBar.appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
     @AppStorage("TodoMenuBar.popupSize") private var popupSizeRaw: String = PopupSize.standard.rawValue
     @AppStorage("TodoMenuBar.showInDock") private var showInDock: Bool = false
+    @AppStorage("TodoMenuBar.menuBarIcon") private var menuBarIconRaw: String = MenuBarIconStyle.checkmark.rawValue
     @State private var launchAtLogin: Bool = LoginItemManager.shared.isEnabled
 
     private var appearanceMode: AppearanceMode {
@@ -48,6 +49,17 @@ struct SettingsView: View {
             }
 
             Section {
+                Picker("Menu Bar Icon", selection: $menuBarIconRaw) {
+                    ForEach(MenuBarIconStyle.allCases) { style in
+                        Label(style.label, systemImage: style.symbolName).tag(style.rawValue)
+                    }
+                }
+                .pickerStyle(.segmented)
+            } header: {
+                Text("Menu Bar Icon")
+            }
+
+            Section {
                 Toggle("Launch at Login", isOn: $launchAtLogin)
                     .accessibilityHint("Starts TodoMenuBar automatically when you sign in to your Mac")
                     .onChange(of: launchAtLogin) { newValue in
@@ -79,7 +91,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 380, height: 400)
+        .frame(width: 380, height: 460)
         .preferredColorScheme(appearanceMode.colorScheme)
         .navigationTitle("TodoMenuBar Settings")
         .onAppear { launchAtLogin = LoginItemManager.shared.isEnabled }
