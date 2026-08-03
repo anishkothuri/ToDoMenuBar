@@ -38,6 +38,7 @@ struct TodoListView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Settings")
+                .accessibilityLabel("Settings")
             }
             .padding([.top, .horizontal])
             .padding(.bottom, 4)

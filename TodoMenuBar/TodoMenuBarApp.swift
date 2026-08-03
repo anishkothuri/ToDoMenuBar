@@ -21,9 +21,10 @@ struct TodoMenuBarApp: App {
     @AppStorage("TodoMenuBar.appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
 
     init() {
-        // Ask macOS to launch this app automatically at login.
-        // Safe to call every launch — it's a no-op if already registered.
-        LoginItemManager.shared.registerAtLogin()
+        // Only nudges login-item registration on the very first launch
+        // ever. After that, the "Launch at Login" toggle in Settings is
+        // the sole source of truth — this never overrides a user's choice.
+        LoginItemManager.shared.registerAtLoginIfFirstLaunch()
     }
 
     var body: some Scene {
@@ -40,6 +41,7 @@ struct TodoMenuBarApp: App {
                     Text("\(remainingCount)")
                 }
             }
+            .accessibilityLabel(remainingCount > 0 ? "TodoMenuBar, \(remainingCount) tasks remaining" : "TodoMenuBar, all tasks complete")
         }
         .menuBarExtraStyle(.window)
 

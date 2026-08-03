@@ -13,6 +13,7 @@ struct SettingsView: View {
     @AppStorage("TodoMenuBar.appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
     @AppStorage("TodoMenuBar.popupSize") private var popupSizeRaw: String = PopupSize.standard.rawValue
     @AppStorage("TodoMenuBar.showInDock") private var showInDock: Bool = false
+    @State private var launchAtLogin: Bool = LoginItemManager.shared.isEnabled
 
     private var appearanceMode: AppearanceMode {
         AppearanceMode(rawValue: appearanceModeRaw) ?? .system
@@ -47,21 +48,47 @@ struct SettingsView: View {
             }
 
             Section {
+                Toggle("Launch at Login", isOn: $launchAtLogin)
+                    .accessibilityHint("Starts TodoMenuBar automatically when you sign in to your Mac")
+                    .onChange(of: launchAtLogin) { newValue in
+                        LoginItemManager.shared.setEnabled(newValue)
+                    }
                 Toggle("Show in Dock", isOn: $showInDock)
+                    .accessibilityHint("Adds a Dock icon in addition to the menu bar icon")
                     .onChange(of: showInDock) { newValue in
                         NSApp.setActivationPolicy(newValue ? .regular : .accessory)
                     }
             } header: {
-                Text("Dock")
+                Text("Startup")
             } footer: {
-                Text("Off by default so TodoMenuBar only lives in the menu bar. Turn this on if you'd like a Dock icon too.")
+                Text("Both are off by default until you turn them on — TodoMenuBar starts out living only in the menu bar. You can also manage login items from System Settings > General > Login Items & Extensions.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
+
+            Section {
+                HStack {
+                    Text("Version")
+                    Spacer()
+                    Text(versionString)
+                        .foregroundColor(.secondary)
+                }
+                Link("View on GitHub", destination: URL(string: "https://github.com/anishkothuri/ToDoMenuBar")!)
+            } header: {
+                Text("About")
+            }
         }
         .formStyle(.grouped)
-        .frame(width: 380, height: 320)
+        .frame(width: 380, height: 400)
         .preferredColorScheme(appearanceMode.colorScheme)
         .navigationTitle("TodoMenuBar Settings")
+        .onAppear { launchAtLogin = LoginItemManager.shared.isEnabled }
+    }
+
+    private var versionString: String {
+        let info = Bundle.main.infoDictionary
+        let shortVersion = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(shortVersion) (\(build))"
     }
 }
